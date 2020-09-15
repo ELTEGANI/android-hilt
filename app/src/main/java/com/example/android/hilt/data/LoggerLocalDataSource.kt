@@ -20,11 +20,19 @@ import android.os.Handler
 import android.os.Looper
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import javax.inject.Inject
+import javax.inject.Singleton
 
-/**
- * Data manager class that handles data manipulation between the database and the UI.
- */
-class LoggerLocalDataSource(private val logDao: LogDao) {
+
+@Singleton
+//since we want the application container to always provide the same instance of LoggerLocalDataSource,
+// we annotate its class with @Singleton:
+//However, because LogDao is an interface, we cannot annotate its constructor with @Inject as interfaces don't have one.
+//How can we tell Hilt how to provide instances of this type?
+//Modules are used to add bindings to Hilt, or in other words, to tell Hilt how to provide instances of different types.
+// In Hilt modules, you include bindings for types that cannot be constructor injected such as interfaces or classes that are not contained in your project.
+// An example of this is OkHttpClient - you need to use its builder to create an instance.
+class LoggerLocalDataSource @Inject constructor(private val logDao: LogDao) {
 
     private val executorService: ExecutorService = Executors.newFixedThreadPool(4)
     private val mainThreadHandler by lazy {
